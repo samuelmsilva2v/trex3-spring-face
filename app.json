@@ -1,0 +1,57 @@
+{
+  "configVersion": "v3",
+  "app": {
+    "appId": 1094119,
+    "appName": "StatusApplication",
+    "appType": "watchface",
+    "version": {
+      "code": 1,
+      "name": "1.0.0"
+    },
+    "icon": "icon.png",
+    "vender": "samuel",
+    "description": "Mostrador estilo console de log do Spring Boot: hora, data, passos, batimentos, kcal e distância"
+  },
+  "permissions": [
+    "data:user.hd.step",
+    "data:user.hd.heart_rate",
+    "data:user.hd.calorie",
+    "data:user.hd.distance"
+  ],
+  "runtime": {
+    "apiVersion": {
+      "compatible": "3.0.0",
+      "target": "4.0.0",
+      "minVersion": "3.0.0"
+    }
+  },
+  "targets": {
+    "default": {
+      "module": {
+        "watchface": {
+          "path": "watchface/index",
+          "main": 1,
+          "editable": 0,
+          "lockscreen": 0,
+          "hightCost": 0
+        }
+      },
+      "platforms": [
+        {
+          "st": "r",
+          "dw": 480
+        }
+      ],
+      "designWidth": 480
+    }
+  },
+  "i18n": {
+    "en-US": {
+      "appName": "StatusApplication"
+    },
+    "pt-BR": {
+      "appName": "StatusApplication"
+    }
+  },
+  "defaultLanguage": "en-US"
+}
