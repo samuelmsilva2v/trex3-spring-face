@@ -1,8 +1,8 @@
 {
   "configVersion": "v3",
   "app": {
-    "appId": 1094119,
-    "appName": "StatusApplication",
+    "appId": 1137033,
+    "appName": "Spring Log",
     "appType": "watchface",
     "version": {
       "code": 1,
@@ -47,10 +47,10 @@
   },
   "i18n": {
     "en-US": {
-      "appName": "StatusApplication"
+      "appName": "Spring Log"
     },
     "pt-BR": {
-      "appName": "StatusApplication"
+      "appName": "Spring Log"
     }
   },
   "defaultLanguage": "en-US"

@@ -1,20 +1,10 @@
-# StatusApplication — mostrador para Amazfit T-Rex 3
+# Spring Log — mostrador para Amazfit T-Rex 3
 
 Mostrador estilo console de log do Spring Boot (Zepp OS, 480x480): hora, data, passos, batimentos, kcal e distância.
 
-```
-      ▶ Run: StatusApplication
-               17:59
-   2026-11-18 qua  1094 --- [main]
- INFO  steps    : 3432
- INFO  heartRate: 64 bpm
- INFO  kcal     : 150
- INFO  distance : 2.52 km
- INFO  Started in 0.42s
-       ● BT · :8080 · UP
-```
+![Preview do mostrador](docs/preview.png)
 
-Tem `appId` próprio, então pode ficar instalado junto com o status.json e o Status.java.
+Tem `appId` próprio, então pode ficar instalado junto com o status.json e o Builder.class.
 
 ## Estrutura
 
