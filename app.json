@@ -39,7 +39,7 @@
       "platforms": [
         {
           "st": "r",
-          "dw": 480
+          "sr": "w480"
         }
       ],
       "designWidth": 480
