@@ -1,7 +1,7 @@
 # Spring Log — mostrador para Amazfit T-Rex 3
 [🇺🇸 Read in English](#spring-log--watch-face-for-amazfit-t-rex-3)
 
-Mostrador estilo console de log do Spring Boot (Zepp OS, 480x480): hora, data, passos, batimentos, kcal e distância.
+Mostrador estilo console de log do Spring Boot (Zepp OS, 480x480): hora, data, passos, batimentos, kcal, distância e sono.
 
 ![Preview do mostrador](docs/preview.png)
 
@@ -61,6 +61,7 @@ Tudo fica no topo de `watchface/index.js`:
 - Ao bater a meta de passos do relógio, a última linha vira `Goal reached: <meta>`.
 - Barra de status: `● ... UP` verde com o celular conectado por Bluetooth, `DOWN` vermelho desconectado (atualiza a cada minuto e ao acender a tela).
 - Distância vem em metros do sensor e é exibida em km com 2 casas.
+- Sono: total de horas dormidas registradas pelo relógio (`7h32m`). Sem registro, aparece a linha `WARN sleep: null` (amarelo). O sistema recalcula o sono a cada ~30 min, então o mostrador relê a cada minuto e ao acender a tela.
 - Não tem versão AOD (tela sempre ligada) ainda.
 
 Fonte: JetBrains Mono (SIL OFL 1.1), reduzida aos caracteres usados (inclui ▶ e ●).
@@ -70,7 +71,7 @@ Fonte: JetBrains Mono (SIL OFL 1.1), reduzida aos caracteres usados (inclui ▶ 
 # Spring Log — watch face for Amazfit T-Rex 3
 [🇧🇷 Leia em Português](#spring-log--mostrador-para-amazfit-t-rex-3)
 
-Spring Boot log console style watch face (Zepp OS, 480x480): time, date, steps, heart rate, calories and distance.
+Spring Boot log console style watch face (Zepp OS, 480x480): time, date, steps, heart rate, calories, distance and sleep.
 
 ![Watch face preview](docs/preview.png)
 
@@ -130,6 +131,7 @@ Everything is at the top of `watchface/index.js`:
 - When the watch step goal is reached, the last line becomes `Goal reached: <goal>`.
 - Status bar: green `● ... UP` while the phone is connected over Bluetooth, red `DOWN` when disconnected (updates every minute and when the screen wakes up).
 - Distance comes from the sensor in meters and is shown in km with 2 decimals.
+- Sleep: total sleep recorded by the watch (`7h32m`). With no record it shows the line `WARN sleep: null` (yellow). The system recalculates sleep about every 30 min, so the face re-reads it every minute and when the screen wakes up.
 - No AOD (always-on display) version yet.
 
 Font: JetBrains Mono (SIL OFL 1.1), subset to the characters used (includes ▶ and ●).

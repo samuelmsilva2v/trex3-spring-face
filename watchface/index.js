@@ -3,17 +3,19 @@
  * Amazfit T-Rex 3 (480x480, Zepp OS)
  *
  *        ▶ Run: StatusApplication
- *                 17:59
- *     2026-11-18 qua  1094 --- [main]
+ *   2026-11-18T                    (a hora é o timestamp do log)
+ *   17:59
+ *   qua  1094 --- [main]
  *   INFO  steps    : 3432
  *   INFO  heartRate: 64 bpm        (WARN ... null sem medição)
  *   INFO  kcal     : 150
  *   INFO  distance : 2.52 km
+ *   INFO  sleep    : 7h32m         (WARN ... null sem registro de sono)
  *   INFO  Started in 0.42s         (Goal reached: N ao bater a meta)
  *        ● BT  ·  :8080  ·  UP     (DOWN sem Bluetooth)
  */
 import { createWidget, widget, align, prop, text_style } from '@zos/ui'
-import { Time, Step, HeartRate, Calorie, Distance } from '@zos/sensor'
+import { Time, Step, HeartRate, Calorie, Distance, Sleep } from '@zos/sensor'
 import { connectStatus } from '@zos/ble'
 
 // ---------- tema (cores do console do Spring Boot) ----------
@@ -34,13 +36,22 @@ const FONT = 'fonts/JetBrainsMono-Subset.ttf'
 const ADV = 0.6 // JetBrains Mono: 600/1000 em por caractere
 
 const LOG_X = 83
-const LOG_TOP = 200
+const LOG_TOP = 196
 const LOG_SIZE = 23
-const LOG_H = 37
+const LOG_H = 34
 
 const PID = '1094'
 const DAYS = ['seg', 'ter', 'qua', 'qui', 'sex', 'sáb', 'dom'] // Time.getDay(): 1 = segunda ... 7 = domingo
 const pad = (n) => String(n).padStart(2, '0')
+// minutos de sono → "7h32m"; null quando o relógio não registrou sono
+const sleepText = (min) => (min > 0 ? `${Math.floor(min / 60)}h${pad(min % 60)}m` : null)
+const sleepMinutes = (s) => {
+  try {
+    return (s.getInfo() || {}).totalTime || 0
+  } catch (e) {
+    return 0 // sem permissão ou sem dado
+  }
+}
 
 function text(props) {
   return createWidget(widget.TEXT, {
@@ -113,29 +124,30 @@ WatchFace({
     this.hr = new HeartRate()
     this.cal = new Calorie()
     this.dist = new Distance()
+    this.sleep = new Sleep()
 
     // ---------- cabeçalho ----------
-    new Row('center', 30, 26, 17, [
+    new Row('center', 28, 26, 17, [
       { text: '▶', color: C.info },
       { text: ' Run: ', color: C.dim },
       { text: 'StatusApplication', color: C.value }
     ])
-    createWidget(widget.FILL_RECT, { x: 128, y: 66, w: 224, h: 1, color: C.rule })
+    createWidget(widget.FILL_RECT, { x: 128, y: 62, w: 224, h: 1, color: C.rule })
 
+    // timestamp ISO do log: data pequena em cima, hora grande embaixo, alinhados com o log
+    this.tStamp = text({ x: LOG_X, y: 70, w: 200, h: 22, text: '0000-00-00T', color: C.dim, text_size: 17 })
     this.tTime = text({
-      x: 40,
-      y: 72,
-      w: 400,
-      h: 86,
+      x: LOG_X - 4, // compensa o recuo do glifo em 72px pra alinhar visualmente com o log
+      y: 88,
+      w: 300,
+      h: 78,
       text: '00:00',
       color: C.value,
-      text_size: 75,
-      align_h: align.CENTER_H
+      text_size: 72
     })
 
-    this.lDate = new Row('center', 162, 24, 17, [
-      { text: '0000-00-00 ---', color: C.dim },
-      { text: '  ', color: C.dim },
+    this.lDate = new Row(LOG_X, 166, 24, 17, [
+      { text: '---  ', color: C.dim },
       { text: PID, color: C.pid },
       { text: ' --- [main]', color: C.dim }
     ])
@@ -145,14 +157,15 @@ WatchFace({
     this.lHr = logLine(1, 'heartRate', 'null')
     this.lKcal = logLine(2, 'kcal', '0')
     this.lDist = logLine(3, 'distance', '0.00 km')
-    this.lLast = new Row(LOG_X, LOG_TOP + 4 * LOG_H, LOG_H, LOG_SIZE, [
+    this.lSleep = logLine(4, 'sleep', 'null')
+    this.lLast = new Row(LOG_X, LOG_TOP + 5 * LOG_H, LOG_H, LOG_SIZE, [
       { text: 'INFO', color: C.info },
       { text: '  ', color: C.dim },
       { text: 'Started in 0.42s', color: C.value }
     ])
 
     // ---------- barra de status ----------
-    this.lStatus = new Row('center', 405, 24, 15, [
+    this.lStatus = new Row('center', 404, 24, 15, [
       { text: '●', color: C.off },
       { text: ' BT  ·  :8080  ·  ', color: C.dim },
       { text: 'DOWN', color: C.error }
@@ -168,7 +181,8 @@ WatchFace({
         year = new Date().getFullYear()
       }
       this.tTime.setProperty(prop.MORE, { text: `${pad(t.getHours())}:${pad(t.getMinutes())}` })
-      this.lDate.set(0, `${year}-${pad(t.getMonth())}-${pad(t.getDate())} ${DAYS[t.getDay() - 1] || ''}`)
+      this.tStamp.setProperty(prop.MORE, { text: `${year}-${pad(t.getMonth())}-${pad(t.getDate())}T` })
+      this.lDate.set(0, `${DAYS[t.getDay() - 1] || '---'}  `)
 
       let bt = false
       try {
@@ -204,15 +218,26 @@ WatchFace({
       this.lDist.set(4, `${(meters / 1000).toFixed(2)} km`)
     }
 
+    this.updateSleep = () => {
+      const s = sleepText(sleepMinutes(this.sleep))
+      this.lSleep.set(0, s ? 'INFO' : 'WARN', s ? C.info : C.warn)
+      this.lSleep.set(4, s || 'null')
+    }
+
     this.updateAll = () => {
       this.updateTime()
       this.updateSteps()
       this.updateHr()
       this.updateKcal()
       this.updateDist()
+      this.updateSleep()
     }
 
-    this.time.onPerMinute(this.updateTime)
+    // sono não tem evento de mudança (o sistema recalcula a cada ~30 min): lê a cada minuto
+    this.time.onPerMinute(() => {
+      this.updateTime()
+      this.updateSleep()
+    })
     this.step.onChange(this.updateSteps)
     this.hr.onLastChange(this.updateHr)
     this.cal.onChange(this.updateKcal)

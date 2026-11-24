@@ -5,18 +5,19 @@
     "appName": "Spring Log",
     "appType": "watchface",
     "version": {
-      "code": 1,
-      "name": "1.0.0"
+      "code": 2,
+      "name": "1.1.0"
     },
     "icon": "icon.png",
     "vender": "samuel",
-    "description": "Mostrador estilo console de log do Spring Boot: hora, data, passos, batimentos, kcal e distância"
+    "description": "Mostrador estilo console de log do Spring Boot: hora, data, passos, batimentos, kcal, distância e sono"
   },
   "permissions": [
     "data:user.hd.step",
     "data:user.hd.heart_rate",
     "data:user.hd.calorie",
-    "data:user.hd.distance"
+    "data:user.hd.distance",
+    "data:user.hd.sleep"
   ],
   "runtime": {
     "apiVersion": {
